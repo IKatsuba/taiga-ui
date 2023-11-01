@@ -5,37 +5,44 @@
 @color-dark-resizer: #3e464e;
 
 :host {
+    .shadow(2);
+
     position: relative;
     display: block;
     min-width: 100%;
-    margin: 1.5rem 0;
+    margin: 0 0 1.5rem;
+    border: 1px solid var(--tui-base-03);
+    border-radius: var(--tui-radius-m);
+    background: var(--tui-base-02);
 }
 
-.t-bg-toggle {
-    position: absolute;
-    bottom: ~'calc(100% + 0.75rem)';
+.t-tabs {
+    padding: 0 1.5rem;
+    background: var(--tui-base-01);
+    border-radius: var(--tui-radius-m) var(--tui-radius-m) 0 0;
+}
+
+.t-options {
+    min-width: 10rem;
+}
+
+.t-mode-option {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    pointer-events: none;
-    width: 100%;
-
-    & > * {
-        pointer-events: auto;
-    }
+    gap: 0.5rem;
 }
 
 .t-wrapper {
-    .shadow(2);
     display: flex;
-    border: 1px solid var(--tui-base-03);
-    border-radius: var(--tui-radius-m);
     max-width: 100%;
     min-height: 6rem;
     width: 100%;
     min-width: 10rem;
     background-color: var(--tui-base-01);
     overflow: hidden;
+    position: relative;
+    z-index: 2;
+    border-radius: 0 0 var(--tui-radius-m) var(--tui-radius-m);
 
     &.t-wrapper_transparent {
         background-image: linear-gradient(45deg, var(--tui-base-02) 25%, transparent 25%),
@@ -120,10 +127,6 @@
     border-radius: 0.25rem;
 }
 
-.t-mode {
-    width: 12.5rem;
-}
-
 .t-select {
     max-width: 15rem;
 }
@@ -177,23 +180,41 @@
     }
 }
 
-.t-group,
 .t-checkbox {
     margin-left: 0.75rem;
 }
 
 .t-button,
+.t-copy-code,
 .t-form-controls {
     margin-top: 0.75rem;
+}
+
+.t-code-container {
+    background: var(--tui-base-01);
+    border-radius: 0 0 var(--tui-radius-m) var(--tui-radius-m);
+}
+
+.t-code {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    height: 100%;
+    --tui-code-action-top: 1.5rem;
 }
 
 @supports (position: sticky) {
     @media screen and (min-height: 37.5rem) {
         :host {
-            &._sticky {
+            &._sticky._allow_sticky {
                 position: sticky;
-                top: 4.625rem;
+                top: 0;
                 z-index: 2;
+
+                > .t-wrapper {
+                    position: sticky;
+                    top: 3.9rem;
+                }
             }
         }
     }

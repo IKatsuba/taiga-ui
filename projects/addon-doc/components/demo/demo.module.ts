@@ -7,8 +7,8 @@ import {
     TuiButtonModule,
     TuiDataListModule,
     TuiExpandModule,
-    TuiGroupModule,
     TuiHintModule,
+    TuiHostedDropdownModule,
     TuiLinkModule,
     TuiModeModule,
     TuiSvgModule,
@@ -16,12 +16,15 @@ import {
     TuiTooltipModule,
 } from '@taiga-ui/core';
 import {
-    TuiCheckboxLabeledModule,
+    TuiCheckboxModule,
     TuiDataListWrapperModule,
-    TuiRadioBlockModule,
+    TuiElasticContainerModule,
+    TuiRadioModule,
     TuiSelectModule,
+    TuiTabsModule,
 } from '@taiga-ui/kit';
 
+import {TuiDocCodeModule} from '../code/code.module';
 import {TuiDocDemoComponent} from './demo.component';
 
 @NgModule({
@@ -34,17 +37,20 @@ import {TuiDocDemoComponent} from './demo.component';
         TuiButtonModule,
         TuiSelectModule,
         TuiExpandModule,
-        TuiGroupModule,
         TuiTooltipModule,
         TuiModeModule,
-        TuiRadioBlockModule,
-        TuiCheckboxLabeledModule,
         TuiSvgModule,
         TuiDataListWrapperModule,
         TuiDataListModule,
         TuiTextfieldControllerModule,
         TuiHintModule,
         TuiResizerModule,
+        TuiDocCodeModule,
+        TuiElasticContainerModule,
+        TuiTabsModule,
+        TuiHostedDropdownModule,
+        TuiRadioModule,
+        TuiCheckboxModule,
     ],
     declarations: [TuiDocDemoComponent],
     exports: [TuiDocDemoComponent],
