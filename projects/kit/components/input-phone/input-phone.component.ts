@@ -195,6 +195,7 @@ export class TuiInputPhoneComponent
 
         this.updateSearch(parsed);
         this.value = parsed === this.countryCode || isText(parsed) ? '' : parsed;
+        this.value = this.value === '' && !this.allowText ? this.countryCode : this.value;
         this.open = true;
     }
 
