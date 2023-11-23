@@ -1,12 +1,26 @@
 <tui-theme-night *ngIf="theme.isDefaultTheme && night.useDefaultNightTheme && (night$ | async)"></tui-theme-night>
 <tui-root>
-    <div class="tui-doc-page">
+    <div
+        *tuiLet="(aside$ | async) || [] as asideMenus"
+        class="tui-doc-page"
+    >
         <tui-doc-navigation class="tui-doc-navigation">
             <ng-content select="tuiDocNavigation"></ng-content>
         </tui-doc-navigation>
-        <div class="tui-doc-content">
+        <div
+            #content
+            class="tui-doc-content"
+            [class._has-aside]="asideMenus.length"
+        >
             <router-outlet class="tui-doc-outlet"></router-outlet>
         </div>
+        <tui-doc-aside
+            *ngIf="asideMenus.length"
+            class="tui-doc-aside"
+            [menu]="asideMenus"
+        >
+            <h2>On this page</h2>
+        </tui-doc-aside>
     </div>
     <header tuiDocHeader>
         <ng-content select="tuiDocHeader"></ng-content>

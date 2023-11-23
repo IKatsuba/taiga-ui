@@ -34,6 +34,7 @@ tui-root > tui-scroll-controls > .t-bar_vertical {
 }
 
 @sidebar-width: 16.25rem;
+@aside-width: 14.5rem;
 
 body {
     background: var(--tui-base-01);
@@ -91,11 +92,31 @@ tui-doc-navigation.tui-doc-navigation {
     }
 }
 
+.tui-doc-aside {
+    position: fixed;
+    top: 6rem;
+    right: 1rem;
+    width: @aside-width;
+
+    @media @tui-tablet {
+        display: none;
+    }
+}
+
 .tui-doc-content {
     margin-left: @sidebar-width;
 
+    &._has-aside {
+        margin-right: calc(@aside-width + 1rem);
+
+        @media @tui-tablet {
+            margin-right: 0;
+        }
+    }
+
     @media @tui-mobile {
         margin-left: 0;
+        margin-right: 0;
     }
 }
 

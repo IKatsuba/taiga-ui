@@ -1,0 +1,14 @@
+<ng-content></ng-content>
+<nav
+    tuiTabs
+    vertical="right"
+    [(activeItemIndex)]="activeIndex"
+>
+    <button
+        *ngFor="let item of menuList"
+        tuiTab
+        (click)="onView(item.id)"
+    >
+        {{ item.title | tuiDocExampleCapitalize }}
+    </button>
+</nav>

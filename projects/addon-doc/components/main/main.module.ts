@@ -1,6 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
+import {TuiLetModule} from '@taiga-ui/cdk';
 import {
     TuiAlertModule,
     TuiButtonModule,
@@ -10,6 +11,7 @@ import {
     TuiThemeNightModule,
 } from '@taiga-ui/core';
 
+import {TuiDocAsideModule} from '../aside/aside.module';
 import {TuiDocHeaderModule} from '../internal/header/header.module';
 import {TuiDocNavigationModule} from '../navigation/navigation.module';
 import {TuiDocMainComponent} from './main.component';
@@ -26,6 +28,8 @@ import {TuiDocMainComponent} from './main.component';
         TuiButtonModule,
         TuiModeModule,
         TuiDocNavigationModule,
+        TuiDocAsideModule,
+        TuiLetModule,
     ],
     declarations: [TuiDocMainComponent],
     exports: [TuiDocMainComponent],

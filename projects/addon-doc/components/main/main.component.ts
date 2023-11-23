@@ -1,16 +1,31 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     forwardRef,
     HostBinding,
     Inject,
+    ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
 import {TuiThemeNightService, TuiThemeService} from '@taiga-ui/addon-doc/services';
 import {TUI_DOC_ICONS, TuiDocIcons} from '@taiga-ui/addon-doc/tokens';
 import {TuiSwipeService} from '@taiga-ui/cdk';
 import {TuiBrightness, TuiModeDirective} from '@taiga-ui/core';
-import {distinctUntilChanged, map, share, startWith} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {
+    delay,
+    distinctUntilChanged,
+    filter,
+    map,
+    share,
+    shareReplay,
+    startWith,
+} from 'rxjs/operators';
+
+import {TuiAsideMenu} from '../aside/aside.component';
 
 @Component({
     selector: 'tui-doc-main',
@@ -28,7 +43,12 @@ import {distinctUntilChanged, map, share, startWith} from 'rxjs/operators';
         TuiSwipeService,
     ],
 })
-export class TuiDocMainComponent {
+export class TuiDocMainComponent implements AfterViewInit {
+    @ViewChild('content')
+    private readonly content?: ElementRef<HTMLElement>;
+
+    readonly aside$ = new BehaviorSubject<readonly TuiAsideMenu[]>([]);
+
     readonly change$ = this.night;
 
     readonly night$ = this.change$.pipe(
@@ -42,7 +62,28 @@ export class TuiDocMainComponent {
         @Inject(TUI_DOC_ICONS) private readonly icons: TuiDocIcons,
         @Inject(TuiThemeService) readonly theme: TuiThemeService,
         @Inject(TuiThemeNightService) readonly night: TuiThemeNightService,
+        @Inject(Router) private readonly router: Router,
     ) {}
+
+    ngAfterViewInit(): void {
+        this.router.events
+            .pipe(
+                delay(0),
+                filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+                shareReplay({refCount: true, bufferSize: 1}),
+            )
+            .subscribe(() => {
+                const items = Array.from(
+                    this.content?.nativeElement.querySelectorAll('tui-doc-example[id]') ??
+                        [],
+                ).map(element => ({
+                    id: element.id,
+                    title: element.getAttribute('heading') || '',
+                }));
+
+                this.aside$.next(items);
+            });
+    }
 
     @HostBinding('attr.data-mode')
     get mode(): TuiBrightness | null {
