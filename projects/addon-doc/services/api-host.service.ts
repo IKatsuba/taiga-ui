@@ -19,6 +19,7 @@ import {
 import {Observable, Subject} from 'rxjs';
 import {
     distinctUntilChanged,
+    filter,
     map,
     shareReplay,
     startWith,
@@ -56,7 +57,7 @@ class Contents implements ArrayLike<string> {
     delete(index: number): void {
         delete this[index];
 
-        while (this.length - 1 in this) {
+        while (!(this.length - 1 in this) && this.length > 0) {
             this.length--;
         }
     }
@@ -128,6 +129,12 @@ export class TuiApiHostService implements OnDestroy {
 
     private readonly onChange = new EventEmitter<void>();
 
+    private readonly beforeChangeTemplate$ = new Subject<void>();
+
+    private readonly beforeChangeProperty$ = new Subject<string>();
+
+    private readonly beforeChangeContent$ = new Subject<number>();
+
     private readonly destroy$ = new Subject<void>();
 
     readonly code$ = this.onChange.pipe(
@@ -153,10 +160,13 @@ export class TuiApiHostService implements OnDestroy {
 
     setTemplate(template$: Observable<TuiApiHostTemplate>): Observable<never> {
         return new Observable(() => {
+            this.beforeChangeTemplate$.next();
+
             const prevTagName = this.tagName;
             const prevBaseProperties = this.baseProperties;
 
             return template$
+                .pipe(takeUntil(this.beforeChangeTemplate$))
                 .subscribe(({tagName, baseProperties}) => {
                     this.tagName = tagName;
                     this.baseProperties = baseProperties;
@@ -171,14 +181,19 @@ export class TuiApiHostService implements OnDestroy {
     }
 
     setProperty(name: string, property: TuiDocumentationProperty): Observable<never> {
-        return new Observable<never>(() => {
+        return new Observable<never>(subscriber => {
+            this.beforeChangeProperty$.next(name);
+
             this.properties[name] = property;
             this.onChange.emit();
 
-            return () => {
-                delete this.properties[name];
-                this.onChange.emit();
-            };
+            return this.beforeChangeProperty$
+                .pipe(filter(changeName => changeName === name))
+                .subscribe(() => subscriber.complete())
+                .add(() => {
+                    delete this.properties[name];
+                    this.onChange.emit();
+                });
         });
     }
 
@@ -186,8 +201,18 @@ export class TuiApiHostService implements OnDestroy {
         return new Observable(() => {
             const index = this.contents.length;
 
+            this.beforeChangeContent$.next(index);
+
             return content$
-                .pipe(startWith(``), distinctUntilChanged())
+                .pipe(
+                    startWith(``),
+                    distinctUntilChanged(),
+                    takeUntil(
+                        this.beforeChangeContent$.pipe(
+                            filter(changedIndex => index === changedIndex),
+                        ),
+                    ),
+                )
                 .subscribe(content => {
                     this.contents.set(index, content);
                     this.onChange.emit();
